@@ -93,7 +93,8 @@ public static class ModelUtils
 			["parent"] = material == Material.BOW ? "item/bow" : material.DefaultParentModel(),
 			["textures"] = new JObject
 			{
-				["layer0"] = item.Name
+				["layer0"] = item.Name,
+				["layer1"] = item.Name
 			}
 		};
 		

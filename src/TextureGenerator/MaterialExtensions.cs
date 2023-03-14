@@ -1662,4 +1662,16 @@ public static class MaterialExtensions
 		}
 		return null;
 	}
+
+	public static bool IsLeatherArmor(this Material material)
+	{
+		return material switch
+		{
+			Material.LEATHER_HELMET or
+			Material.LEATHER_CHESTPLATE or
+			Material.LEATHER_LEGGINGS or
+			Material.LEATHER_BOOTS => true,
+			_=> false
+		};
+	}
 }
