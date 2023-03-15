@@ -53,9 +53,9 @@ Log.CloseAndFlush();
 
 void CopyDefaultModelsAndTextures()
 {
-	if(Directory.Exists("models/default"))
+	if (Directory.Exists("models/default"))
 		ZipUtils.CopyDirectory("models/default", "pack/assets/minecraft/models", true);
-	if(Directory.Exists("textures/default"))
+	if (Directory.Exists("textures/default"))
 		ZipUtils.CopyDirectory("textures/default", "pack/assets/minecraft/textures", true);
 }
 
@@ -76,7 +76,7 @@ void GenerateShaderCompatibleArmor(Dictionary<string, Item> armors)
 		image1.Mutate(o => o.DrawImage(leather1, new Point(0, 0), 1f));
 	}
 	image1[0, 1] = new(255, 255, 255, 255);
-	
+
 	using (var leather2 = Image.Load<Rgba32>(Path.Combine(armorsPath, "leather_layer_2.png")))
 	{
 		leather2.Mutate(o => o.Resize(64, 32, KnownResamplers.NearestNeighbor));
@@ -97,7 +97,7 @@ void GenerateShaderCompatibleArmor(Dictionary<string, Item> armors)
 			layer2.Mutate(o => o.Resize(64, 32, KnownResamplers.NearestNeighbor));
 			image2.Mutate(o => o.DrawImage(layer2, new Point(64 * origin, 0), 1f));
 		}
-		
+
 		image1[origin * 64, 0] = color;
 		image2[origin * 64, 0] = color;
 
@@ -273,14 +273,24 @@ List<Item> FilterAllItems(List<Item> items)
 
 void GenerateForItem(Item item, Dictionary<Material, JObject> dictionary)
 {
-	if (item is { Texture: { }, Model: null } && item.Data["material"] is Material material)
-	{
-		// add override to material model
-		ModelUtils.AddOverrides(item, material, dictionary);
+	if (item.Data["material"] is not Material material)
+		return;
 
+	// add override to material model
+	ModelUtils.AddOverrides(item, material, dictionary);
+
+	if (item.Model is null)
+	{
 		// save model generated for this
 		ModelUtils.GenerateModel(item, material);
+	}
+	else
+	{
+		ModelUtils.CopyModels(item, material);
+	}
 
+	if(item.Texture is not null)
+	{
 		// save texture
 		TextureUtils.CopyTextures(item, material);
 	}

@@ -168,4 +168,24 @@ public static class ModelUtils
 			File.WriteAllText(path, pull);
 		}
 	}
+
+	public static void CopyModels(Item item, Material material)
+	{
+		var path = Path.Combine("pack", "assets", "minecraft", item.Model!);
+		var dir = Path.GetDirectoryName(path);
+		Directory.CreateDirectory(dir!);
+		Log.Verbose("Copying models for {Item} in {Dir}", item.Name, dir);
+		File.Copy(item.Model!, Path.Combine("pack", "assets", "minecraft", item.Model!), true);
+
+		if (material == Material.BOW)
+		{
+			for (var i = 0; i < 3; i++)
+			{
+				var name = Path.ChangeExtension(item.Model, null) + "_" + i;
+				name = Path.ChangeExtension(name, "json");
+				path = Path.Combine("pack", "assets", "minecraft", name);
+				File.Copy(name, path, true);
+			}
+		}
+	}
 }

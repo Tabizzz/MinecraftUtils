@@ -5,6 +5,9 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<LangVersion>11</LangVersion>
+		<PublishSingleFile>true</PublishSingleFile>
+		<SelfContained>false</SelfContained>
 	</PropertyGroup>
 
 	<ItemGroup>

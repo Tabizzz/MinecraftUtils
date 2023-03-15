@@ -20,7 +20,7 @@ public static class TextureUtils
 				var name = Path.ChangeExtension(item.Texture, null) + "_" + i;
 				name = Path.ChangeExtension(name, "png");
 				path = Path.Combine("pack", "assets", "minecraft", name);
-				File.Copy(name, Path.Combine("pack", "assets", "minecraft", name), true);
+				File.Copy(name, path, true);
 			}
 		}
 	}

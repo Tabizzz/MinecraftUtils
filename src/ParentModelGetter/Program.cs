@@ -20,7 +20,7 @@ var groups = allFiles.Select(file =>
 	
 	jobj["material"] = Path.ChangeExtension(Path.GetRelativePath("item", file), null).ToUpper();
 	return jobj;
-}).GroupBy(model => model?["parent"]?.ToString());
+}).GroupBy(model => model["parent"]?.ToString());
 
 var builder = new StringBuilder();
 
@@ -36,7 +36,7 @@ foreach (var group in groups)
 			Log.Information("{Item}", item["material"]?.ToString());
 			builder.Append("case Material." + material + ":\n");
 		}
-		catch (Exception e)
+		catch (Exception)
 		{
 			// ignored
 		}
