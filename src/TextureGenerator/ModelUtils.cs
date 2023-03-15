@@ -30,6 +30,12 @@ public static class ModelUtils
 			jobj["display"] = JsonConvert.DeserializeObject<JObject>(Json.BowDisplay);
 			jobj["overrides"] = JsonConvert.DeserializeObject<JArray>(Json.BowPulling);
 		}
+		if (material == Material.SHIELD)
+		{
+			jobj["gui_light"] = "front";
+			jobj["display"] = JsonConvert.DeserializeObject<JObject>(Json.ShieldDisplay);
+			jobj["overrides"] = JsonConvert.DeserializeObject<JArray>(Json.ShieldBlocking);
+		}
 
 		modelsPerMaterial.Add(material, jobj);
 		return jobj;
@@ -41,7 +47,7 @@ public static class ModelUtils
 		var overrides = materialmodel["overrides"] as JArray ?? new JArray();
 
 		Log.Verbose("Generating overrides for {Item} in {Material}", item.Name, material);
-		
+
 		overrides.Add(new JObject
 		{
 			["model"] = item.Name,
@@ -83,21 +89,41 @@ public static class ModelUtils
 				}
 			});
 		}
+
+		if (material == Material.SHIELD)
+		{
+			overrides.Add(new JObject
+			{
+				["model"] = item.Name + "_blocking",
+				["predicate"] = new JObject
+				{
+					["blocking"] = 1,
+					["custom_model_data"] = (int)item.Data["model"]
+				}
+			});
+		}
+
 		materialmodel["overrides"] ??= overrides;
 	}
 
 	public static void GenerateModel(Item item, Material material)
 	{
+		var parent = material switch
+		{
+			Material.BOW => "item/bow",
+			Material.SHIELD => "gen/shield",
+			_ => material.DefaultParentModel()
+		};
 		var model = new JObject()
 		{
-			["parent"] = material == Material.BOW ? "item/bow" : material.DefaultParentModel(),
+			["parent"] = parent,
 			["textures"] = new JObject
 			{
 				["layer0"] = item.Name,
 				["layer1"] = item.Name
 			}
 		};
-		
+
 		var folder = Path.Combine("pack", "assets", "minecraft", "models");
 		var path = Path.Combine(folder, Path.ChangeExtension(item.Name, "json"));
 		var dir = Path.GetDirectoryName(path);
@@ -124,6 +150,22 @@ public static class ModelUtils
 				Directory.CreateDirectory(dir!);
 				File.WriteAllText(path, pull);
 			}
+		}
+		if (material == Material.SHIELD)
+		{
+			Log.Information("Saving shield blocking model for {Item} in {Path}", item.Name, dir);
+
+			path = Path.Combine(folder, Path.ChangeExtension(item.Name + "_blocking", "json"));
+			var pull = JsonConvert.SerializeObject(new JObject()
+			{
+				["parent"] = "gen/shield_blocking",
+				["textures"] = new JObject
+				{
+					["layer0"] = item.Name
+				}
+			});
+			Directory.CreateDirectory(dir!);
+			File.WriteAllText(path, pull);
 		}
 	}
 }

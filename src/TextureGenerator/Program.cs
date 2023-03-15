@@ -36,6 +36,8 @@ var clearDirs = new[]
 
 RemovePreviusDirs(clearDirs);
 
+CopyDefaultModelsAndTextures();
+
 allItems = FilterAllItems(allItems);
 
 allItems = GenerateModelForAllItems(allItems, yamlDeserializer, modelsPerMaterial);
@@ -48,6 +50,14 @@ GenerateShaderCompatibleArmor(armorSets);
 
 ZipUtils.CompressTo("pack", "pack.zip");
 Log.CloseAndFlush();
+
+void CopyDefaultModelsAndTextures()
+{
+	if(Directory.Exists("models/default"))
+		ZipUtils.CopyDirectory("models/default", "pack/assets/minecraft/models", true);
+	if(Directory.Exists("textures/default"))
+		ZipUtils.CopyDirectory("textures/default", "pack/assets/minecraft/textures", true);
+}
 
 void GenerateShaderCompatibleArmor(Dictionary<string, Item> armors)
 {
